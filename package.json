@@ -1,0 +1,15 @@
+{
+  "name": "cards",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "WILLIAM DANN",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^1.8.2",
+    "electron-window-manager": "^1.0.6"
+  }
+}

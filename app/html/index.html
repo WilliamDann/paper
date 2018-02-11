@@ -1,0 +1,152 @@
+<head>
+    <title>Placeholder Title</title>
+    <script src="../card.js" type="text/javascript"></script>
+</head>
+
+<style>
+    @font-face {
+        font-family: "Handwriting";
+        src: url("IndieFlower.ttf");
+    }
+    @font-face {
+        font-family: "Nova";
+        src: url("NovaFlat.ttf");
+    }
+
+    body {
+        -ms-overflow-style: scrollbar;
+        -webkit-app-region: drag;
+    }
+    button {
+        -webkit-app-region: no-drag;
+    }
+
+    .title {
+        font-family: "Handwriting";
+        font-size: 42px;
+        text-align: center;
+        padding: 0px; margin-bottom: -25px;
+    }
+    .desc {
+        font-family: "Handwriting";
+        font-size: 17px;
+        padding: 0px; margin: 10px;
+        margin-top: 0px;
+    }
+
+    .finish {
+        position: absolute;
+        right:  0;
+        bottom: 0;
+
+        background-color: #b8edad;
+        border-width: 0px;
+        padding: 10px;
+    }
+    .edit {
+        position: absolute;
+        right:  52px;
+        bottom: 0;
+
+        background-color: #add3ed;
+        border-width: 0px;
+        padding: 10px;
+    }
+
+    hr {
+        border-color: #edaead;
+    }
+
+    .iconImg {
+        width: 65;
+        height: 88px;
+    }
+</style>
+
+<body>
+    <p class="title" id="title">Placeholder Title</p>
+    <hr class="hrFirst">
+    <p class="desc" id="desc">This is a placeholder descreption</p>
+
+    
+    <script>
+        const ipc = require('electron').ipcRenderer;
+        var edit = false;
+        var identity = null;
+        
+        document.addEventListener('keydown', event => {
+            // If tab
+            if (event.keyCode == 9) {
+                event.preventDefault();
+                toggleEdit();
+            }
+            if (event.keyCode == 8 && !edit) {
+                exit();
+            }
+        });
+
+        // Assign an identity to the card
+        function assign(identity) {
+            document.getElementById("title").innerHTML = identity.title;
+            document.getElementById("desc").innerHTML = identity.desc;
+            
+            document.title = identity.title;
+        }
+        
+        // Toggle edit mode
+        function toggleEdit() {
+            if (!edit) {
+                var title = document.getElementById("title");
+                var desc  = document.getElementById("desc");
+
+                // document.getElementById("edit").style.display = "none";
+
+                title.setAttribute("contentEditable", true);
+                desc.setAttribute("contentEditable", true);
+                
+                title.style.setProperty("-webkit-app-region", "no-drag");
+                desc.style.setProperty("-webkit-app-region", "no-drag");
+            } else {
+                var title = document.getElementById("title");
+                var desc  = document.getElementById("desc");
+
+                // document.getElementById("edit").style.display = "block";
+                title.setAttribute("contentEditable", false);
+                desc.setAttribute("contentEditable", false);
+                
+                title.style.setProperty("-webkit-app-region", "drag");
+                desc.style.setProperty("-webkit-app-region", "drag");
+                
+                identity.title = title.innerHTML;
+                identity.desc  = desc.innerHTML;
+                assign(identity);
+            }
+            
+            edit = !edit;
+        }
+        
+        // Exit the program
+        function exit() {
+            if (edit) {
+                toggleEdit();
+            } else {
+                window.close();
+            }
+        }
+        
+        // Create a new notecard
+        function newNotecard() {
+            ipc.send("notecard-create", JSON.stringify({name: "New Notecard", desc: "Press tab to edit"}));
+        }
+
+        // When identity is recived
+        ipc.on('identity-assign', (event, message) => {
+            message = JSON.parse(message);
+            identity = new Card(message["name"], message["desc"]);
+            
+            assign(identity);
+        });
+
+        </script>
+        <button class="finish" id="finish" onclick="newNotecard();">New Notecard</button>
+    </body>
