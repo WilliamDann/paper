@@ -4,7 +4,7 @@ const url = require('url')
 const ipcMain = require('electron').ipcMain;
 let win
 
-function createNotecard (text="Press tab to enter edit mode") {
+function createPaper (text="Press tab to enter edit mode") {
   win = new BrowserWindow({width: 306, height: 396, frame: false})
   win.loadURL(url.format({
     pathname: path.join(__dirname, 'app/html/index.html'),
@@ -22,7 +22,7 @@ function createNotecard (text="Press tab to enter edit mode") {
   })
 }
 
-app.on('ready', () => { createNotecard() })
+app.on('ready', () => { createPaper() })
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
@@ -30,12 +30,12 @@ app.on('window-all-closed', () => {
 })
 app.on('activate', () => {
   if (win === null) {
-    createNotecard()
+    createPaper()
   }
 })
 
-ipcMain.on('notecard-create', (event, message) => {
-  createNotecard(message);
+ipcMain.on('paper-create', (event, message) => {
+  createPaper(message);
 })
 
 ipcMain.on('toggle-dev-tools', () => {
