@@ -27,7 +27,7 @@
         text-align: center;
         padding: 0px; margin-bottom: -25px;
     }
-    .desc {
+    .text {
         font-family: "Handwriting";
         font-size: 17px;
         padding: 0px; margin: 10px;
@@ -64,17 +64,19 @@
 </style>
 
 <body>
-    <p class="title" id="title">Placeholder Title</p>
-    <hr class="hrFirst">
-    <p class="desc" id="desc">This is a placeholder descreption</p>
+    <p class="text" id="text">This is a placeholder textreption</p>
 
-    
     <script>
         const ipc = require('electron').ipcRenderer;
+        const showdown = require('showdown');
+
         var edit = false;
         var identity = null;
+
+        var oldText = "";
         
         document.addEventListener('keydown', event => {
+            
             // If tab
             if (event.keyCode == 9) {
                 event.preventDefault();
@@ -83,42 +85,37 @@
             if (event.keyCode == 8 && !edit) {
                 exit();
             }
+            if(event.keyCode == 123) {
+                ipc.send('toggle-dev-tools', 'dew it');
+            }
+            // Every key press render the markdown if not edit
+            if (!edit) {
+                renderText();
+            }
         });
 
         // Assign an identity to the card
         function assign(identity) {
-            document.getElementById("title").innerHTML = identity.title;
-            document.getElementById("desc").innerHTML = identity.desc;
-            
-            document.title = identity.title;
+            document.getElementById("text").innerHTML = identity.text;
         }
         
         // Toggle edit mode
         function toggleEdit() {
             if (!edit) {
-                var title = document.getElementById("title");
-                var desc  = document.getElementById("desc");
-
-                // document.getElementById("edit").style.display = "none";
-
-                title.setAttribute("contentEditable", true);
-                desc.setAttribute("contentEditable", true);
+                var text  = document.getElementById("text");
                 
-                title.style.setProperty("-webkit-app-region", "no-drag");
-                desc.style.setProperty("-webkit-app-region", "no-drag");
+                oldText = oldText.replace(/(?:\r\n|\r|\n)/g, '<br />');
+                text.innerHTML = oldText;
+                
+                text.setAttribute("contentEditable", true);
+                text.style.setProperty("-webkit-app-region", "no-drag");
             } else {
-                var title = document.getElementById("title");
-                var desc  = document.getElementById("desc");
-
-                // document.getElementById("edit").style.display = "block";
-                title.setAttribute("contentEditable", false);
-                desc.setAttribute("contentEditable", false);
+                var text  = document.getElementById("text");
                 
-                title.style.setProperty("-webkit-app-region", "drag");
-                desc.style.setProperty("-webkit-app-region", "drag");
+                text.setAttribute("contentEditable", false);
+                text.style.setProperty("-webkit-app-region", "drag");
                 
-                identity.title = title.innerHTML;
-                identity.desc  = desc.innerHTML;
+                identity.text  = text.innerHTML;
                 assign(identity);
             }
             
@@ -133,20 +130,27 @@
                 window.close();
             }
         }
+
+        var converter = new showdown.Converter({simpleLineBreaks:true});
+        // Render text in the box
+        function renderText() {
+            var box = document.getElementById("text");
+            oldText = box.innerText;
+
+            box.innerHTML = converter.makeHtml(box.innerText);
+        }
         
         // Create a new notecard
         function newNotecard() {
-            ipc.send("notecard-create", JSON.stringify({name: "New Notecard", desc: "Press tab to edit"}));
+            ipc.send("notecard-create", "Press tab to enter edit mode");
         }
 
         // When identity is recived
         ipc.on('identity-assign', (event, message) => {
-            message = JSON.parse(message);
-            identity = new Card(message["name"], message["desc"]);
+            identity = new Card(message);
             
             assign(identity);
         });
 
         </script>
-        <button class="finish" id="finish" onclick="newNotecard();">New Notecard</button>
     </body>
