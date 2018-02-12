@@ -22,13 +22,12 @@
     }
 
     .title {
-        font-family: "Handwriting";
         font-size: 42px;
         text-align: center;
         padding: 0px; margin-bottom: -25px;
     }
     .text {
-        font-family: "Handwriting";
+        font-family: "Nova";
         font-size: 17px;
         padding: 0px; margin: 10px;
         margin-top: 0px;
@@ -69,6 +68,7 @@
     <script>
         const ipc = require('electron').ipcRenderer;
         const showdown = require('showdown');
+        const showdownKatex = require('showdown-katex')
 
         var edit = false;
         var identity = null;
