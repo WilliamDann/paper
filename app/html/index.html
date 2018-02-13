@@ -69,6 +69,7 @@
         const ipc = require('electron').ipcRenderer;
         const showdown = require('showdown');
         const showdownKatex = require('showdown-katex')
+        var path = require('path');
 
         var edit = false;
         var identity = null;
@@ -81,16 +82,23 @@
             if (event.keyCode == 9) {
                 event.preventDefault();
                 toggleEdit();
+                // Every key press render the markdown if not edit
+                if (!edit) {
+                    renderText();
+                }
             }
-            if (event.keyCode == 8 && !edit) {
+            else if(event.keyCode == 78 && !edit) {
+                event.preventDefault();
+                newNotecard();
+            }
+            else if (event.keyCode == 8 && !edit) {
+                if (identity.saveID) {
+                    identity.delete(path.join(__dirname, '../save/save' + identity.saveID + ".json"))
+                }
                 exit();
             }
-            if(event.keyCode == 123) {
+            else if(event.keyCode == 123) {
                 ipc.send('toggle-dev-tools', 'dew it');
-            }
-            // Every key press render the markdown if not edit
-            if (!edit) {
-                renderText();
             }
         });
 
@@ -116,6 +124,18 @@
                 text.style.setProperty("-webkit-app-region", "drag");
                 
                 identity.text  = text.innerHTML;
+                
+                // Save files
+                if (identity.saveID === null) {
+                    fs.readdir(path.join(__dirname, '../save'), (err, files) => {
+                        if (err) { alert("Saving Error!"); }
+                        identity.saveID = files.length;
+                        identity.save(path.join(__dirname, '../save/save' + files.length + ".json"));
+                    });
+                } else {
+                    identity.save(path.join(__dirname, '../save/save' + identity.saveID + ".json"));
+                }
+
                 assign(identity);
             }
             
@@ -147,9 +167,9 @@
 
         // When identity is recived
         ipc.on('identity-assign', (event, message) => {
-            identity = new Card(message);
-            
+            identity = new Card(message.text, message.saveID);
             assign(identity);
+            renderText();
         });
 
         </script>
