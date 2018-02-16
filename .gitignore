@@ -1,2 +1,7 @@
 /node_modules
 /app/save/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
