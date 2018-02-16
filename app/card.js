@@ -20,6 +20,10 @@ class Card {
         });
     }
 
+    static loadSync(location) {
+        return fs.readFileSync(location);
+    }
+
     // Delete the card
     delete(location, callback) {
         fs.unlink(location, () => { callback(); })

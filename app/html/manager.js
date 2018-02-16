@@ -106,8 +106,16 @@ function toggleEdit() {
         if (identity.saveID === null) {
             fs.readdir(path.join(__dirname, '../save'), (err, files) => {
                 if (err) { alert("Saving Error!"); }
-                identity.saveID = files.length;
-                identity.save(path.join(__dirname, '../save/save' + files.length + ".json"));
+                
+                // Determine highest saveID
+                var newID = 0;
+                files.forEach(file => {
+                    var card = JSON.parse(Card.loadSync(path.join(__dirname, "../save/", file)));
+                    if (card.saveID >= newID) { newID = card.saveID + 1; }
+                });
+
+                identity.saveID = newID;
+                identity.save(path.join(__dirname, '../save/save' + newID + ".json"));
             });
         } else {
             identity.save(path.join(__dirname, '../save/save' + identity.saveID + ".json"));

@@ -7,7 +7,7 @@ const fs = require('fs');
 // Create  a new paper
 function createPaper(text="# Press tab to enter edit mode", saveID=null) {
   // Open a window
-  var win = windowManager.open(null, 'Loading ...', '/app/html/index.html', 'default', null);
+  var win = windowManager.open(null, 'Loading ...', '/app/html/index.html', 'default', null, true);
 
   
   win.content().on('did-finish-load', () => {
