@@ -1,0 +1,56 @@
+@font-face {
+    font-family: "Handwriting";
+    src: url("IndieFlower.ttf");
+}
+@font-face {
+    font-family: "Nova";
+    src: url("NovaFlat.ttf");
+}
+
+body {
+    -ms-overflow-style: scrollbar;
+    -webkit-app-region: drag;
+}
+button {
+    -webkit-app-region: no-drag;
+}
+
+.title {
+    font-size: 42px;
+    text-align: center;
+    padding: 0px; margin-bottom: -25px;
+}
+.text {
+    font-family: "Nova";
+    font-size: 17px;
+    padding: 0px; margin: 10px;
+    margin-top: 0px;
+}
+
+.finish {
+    position: absolute;
+    right:  0;
+    bottom: 0;
+
+    background-color: #b8edad;
+    border-width: 0px;
+    padding: 10px;
+}
+.edit {
+    position: absolute;
+    right:  52px;
+    bottom: 0;
+
+    background-color: #add3ed;
+    border-width: 0px;
+    padding: 10px;
+}
+
+hr {
+    border-color: #edaead;
+}
+
+.iconImg {
+    width: 65;
+    height: 88px;
+}
