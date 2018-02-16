@@ -10,8 +10,28 @@ var identity = null;
 
 var oldText = "";
 
+var keymap = {17:false, 66:false, 73:false, 84:false}
+
+function insertTextAtCursor(text) {
+    var sel, range, html;
+    if (window.getSelection) {
+        sel = window.getSelection();
+        if (sel.getRangeAt && sel.rangeCount) {
+            range = sel.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode( document.createTextNode(text) );
+        }
+    } else if (document.selection && document.selection.createRange) {
+        document.selection.createRange().text = text;
+    }
+}
+
 document.addEventListener('keydown', event => {
-    
+    if (event.keyCode in keymap) {
+        keymap[event.keyCode] = true;
+    }
+
+
     // Tab
     if (event.keyCode == 9) {
         event.preventDefault();
@@ -33,6 +53,28 @@ document.addEventListener('keydown', event => {
     // n
     if (event.keyCode == 78 && !edit) {
         windowManager.bridge.emit('create-window', {text:'# New Paper <br> Press tab to edit'});
+    }
+
+    // Editor shortcuts
+    if (edit) {
+        // Ctl+B
+        if (keymap[17] && keymap[66]) {
+            insertTextAtCursor("**");
+        }
+        // Ctl+I
+        if (keymap[17] && keymap[73]) {
+            insertTextAtCursor("_");
+        }
+        // Ctl+T
+        if (keymap[17] && keymap[84]) {
+            insertTextAtCursor("#");
+        }
+    }
+});
+
+document.addEventListener('keyup', event => {
+    if (event.keyCode in keymap) {
+        keymap[event.keyCode] = false;
     }
 });
 
