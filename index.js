@@ -2,6 +2,7 @@ const electron = require('electron');
 const app = electron.app;
 const windowManager = require('electron-window-manager');
 const Card = require('./app/card');
+const fs = require('fs');
 
 // Create  a new paper
 function createPaper(text="# Press tab to enter edit mode", saveID=null) {
@@ -27,10 +28,11 @@ app.on('ready', function(){
       'menu': null, frame:false, resizable:true, devMode:false, height:396, width:306
     });
     
-    Card.load("./app/save/save0.json", paper => {
-      createPaper(paper.text, paper.saveID);
-    });
-    Card.load("./app/save/save1.json", paper => {
-      createPaper(paper.text, paper.saveID);
+    fs.readdir("./app/save/", (err, files) => {
+      files.forEach(file => {
+        Card.load("./app/save/" + file, paper => {
+          createPaper(paper.text, paper.saveID);
+        });
+      });
     });
 });
