@@ -1,5 +1,5 @@
 <head>
-    <title>Placeholder Title</title>
+    <title>Paper</title>
     <script src="../card.js" type="text/javascript"></script>
 </head>
 
@@ -68,8 +68,10 @@
     <script>
         const ipc = require('electron').ipcRenderer;
         const showdown = require('showdown');
-        const showdownKatex = require('showdown-katex')
         var path = require('path');
+
+        var remote = require('electron').remote;
+        var windowManager = remote.require('electron-window-manager');
 
         var edit = false;
         var identity = null;
@@ -87,24 +89,19 @@
                     renderText();
                 }
             }
-            else if(event.keyCode == 78 && !edit) {
-                event.preventDefault();
-                newNotecard();
-            }
+
             else if (event.keyCode == 8 && !edit) {
                 if (identity.saveID) {
                     identity.delete(path.join(__dirname, '../save/save' + identity.saveID + ".json"))
                 }
                 exit();
             }
-            else if(event.keyCode == 123) {
-                ipc.send('toggle-dev-tools', 'dew it');
-            }
         });
 
         // Assign an identity to the card
-        function assign(identity) {
-            document.getElementById("text").innerHTML = identity.text;
+        function assign(id) {
+            identity = id;
+            document.getElementById("text").innerHTML = id.text;
         }
         
         // Toggle edit mode
@@ -159,18 +156,16 @@
 
             box.innerHTML = converter.makeHtml(box.innerText);
         }
+
+        var got = false;
+        // When this window is given an identity
+        windowManager.bridge.on("identity-assign", event => {
+            if (!got) {
+                assign(new Card(event.text, event.saveID));
+                renderText();
+                got = true;
+            }
+        })
         
-        // Create a new notecard
-        function newNotecard() {
-            ipc.send("paper-create", "Press tab to enter edit mode");
-        }
-
-        // When identity is recived
-        ipc.on('identity-assign', (event, message) => {
-            identity = new Card(message.text, message.saveID);
-            assign(identity);
-            renderText();
-        });
-
         </script>
     </body>

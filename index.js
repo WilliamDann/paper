@@ -1,59 +1,29 @@
-const {app, BrowserWindow} = require('electron')
-const path = require('path')
-const url = require('url')
-const ipcMain = require('electron').ipcMain;
-var fs = require('fs');
-const Card = require('./app/card.js');
-let win
+const electron = require('electron');
+const app = electron.app;
+const windowManager = require('electron-window-manager');
+const Card = require('./app/card');
 
-// Load all the papers in windows
-function loadPapers() {
-  // Save files
-  fs.readdir(path.join(__dirname, 'app/save'), (err, files) => {
-    if (err) { throw err; }
-    files.forEach(file => {
-      Card.load(path.join(path.join(__dirname, 'app/save'), file), paper => {
-        createPaper(paper.text, paper.saveID);
-      });
+function createPaper(text="# Press tab to enter edit mode", saveID=null) {
+  // Open a window
+  var win = windowManager.open(null, 'Loading ...', '/app/html/index.html', 'default', null);
+
+  
+  win.content().on('did-finish-load', () => {
+    windowManager.bridge.emit('identity-assign', {text:text, saveID:saveID}, win);
+  })
+}
+
+// When the application is ready
+app.on('ready', function(){
+    windowManager.init({});
+    windowManager.templates.set('default', {
+      'menu': null, frame:false, resizable:true, devMode:false, height:396, width:306
     });
-  }); 
-}
-
-function createPaper (text="Press tab to enter edit mode", saveID=null) {
-  win = new BrowserWindow({width: 306, height: 396, frame: false})
-  win.loadURL(url.format({
-    pathname: path.join(__dirname, 'app/html/index.html'),
-    protocol: 'file:',
-    slashes: true
-  }))
-
-  // win.toggleDevTools();
-  // Tell the notecard who it is
-  win.webContents.on('did-finish-load', () => {
-    win.webContents.send("identity-assign", {text:text,saveID:saveID})
-  })
-
-  win.on('closed', () => {
-    win = null
-  })
-}
-
-app.on('ready', () => { loadPapers() })
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
-app.on('activate', () => {
-  if (win === null) {
-    createPaper()
-  }
-})
-
-ipcMain.on('paper-create', (event, message) => {
-  createPaper(message);
-})
-
-ipcMain.on('toggle-dev-tools', () => {
-  win.toggleDevTools();
+    
+    Card.load("./app/save/save0.json", paper => {
+      createPaper(paper.text, paper.saveID);
+    });
+    Card.load("./app/save/save1.json", paper => {
+      createPaper(paper.text, paper.saveID);
+    });
 });
