@@ -7,7 +7,7 @@ const fs = require('fs');
 // Create  a new paper
 function createPaper(text="# Press tab to enter edit mode", saveID=null) {
   // Open a window
-  var win = windowManager.open(null, 'Loading ...', '/app/html/index.html', 'default', null, true);
+  var win = windowManager.open(null, 'Loading ...', '/app/html/index.html', 'default', null);
 
   
   win.content().on('did-finish-load', () => {
@@ -26,6 +26,9 @@ app.on('ready', function(){
     windowManager.init({});
     windowManager.templates.set('default', {
       'menu': null, frame:false, resizable:true, devMode:false, height:396, width:306
+    });
+    windowManager.templates.set('popup', {
+      'menu': null, frame:false, resizable:true, devMode:false, height:200, width:250
     });
     
     fs.readdir("./app/save/", (err, files) => {

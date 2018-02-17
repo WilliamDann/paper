@@ -6,13 +6,50 @@
     font-family: "Nova";
     src: url("NovaFlat.ttf");
 }
-
 body {
     -ms-overflow-style: scrollbar;
     -webkit-app-region: drag;
 }
-button {
+
+button {    
+    background-color: rgba(76, 175, 80, 0.1);
+    border: none;
+    color: white;
+    text-decoration: none;
+
     -webkit-app-region: no-drag;
+    float: right;
+    border-radius: 50%;
+    width: 20px; height: 20px;
+}
+button:hover {
+    background-color: rgba(76, 175, 80, 1);
+}
+button:focus {
+    outline: 0;
+}
+
+
+#export {
+    background-color: rgba(130, 205, 221, 0.1);
+    color: white;
+}
+#export:hover {
+    background-color: rgba(130, 205, 221, 0.7);
+}
+#export:active {
+    background-color: rgba(130, 205, 221, 1);
+}
+
+#close {
+    background-color: rgba(221, 74, 74, 0.1);
+    color: white;
+}
+#close:hover {
+    background-color: rgba(221, 74, 74, 0.7);
+}
+#close:active {
+    background-color: rgba(221, 74, 74, 1);
 }
 
 .title {
@@ -53,4 +90,8 @@ hr {
 .iconImg {
     width: 65;
     height: 88px;
+}
+
+select {
+    -webkit-app-region: no-drag;
 }

@@ -1,0 +1,48 @@
+<head>
+    <title>Export Paper</title>
+    <script src="../card.js" type="text/javascript"></script>
+</head>
+
+<style>
+    body {
+        -ms-overflow-style: scrollbar;
+        -webkit-app-region: drag;
+    }
+
+    @font-face {
+        font-family: "Nova";
+        src: url("NovaFlat.ttf");
+    }
+
+    button {
+        -webkit-app-region: no-drag;
+    }
+    select {
+        -webkit-app-region: no-drag;
+    }
+    .accept {
+        margin-top: 35px;
+        margin-bottom: 0px;
+
+        background-color: rgb(106, 198, 108);
+        border: none;
+        text-decoration: none;
+
+        width: 100%;
+        padding: 5px;
+    }
+</style>
+
+<h1 style="font-family:Nova; text-align: center;">Export</h1>
+<div style="margin: auto; padding:0px; width: 50%">
+    <p style="margin: 0px; padding:0px;">Choose a method: </p>
+    <select id="method" class="method">
+        <option value="md">Markdown File</option>
+        <option value="txt">Text File</option>
+        <option value="raw_txt">Raw Text File</option>
+    </select>
+    <div style="margin: auto; padding:0px; width: 50%">
+        <button class="accept" id="export" onclick="exportPaper(() => { window.close(); });">Export</button>
+    </div>
+</div>
+<script src="export.js"></script>

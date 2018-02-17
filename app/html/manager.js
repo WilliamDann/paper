@@ -131,6 +131,7 @@ function toggleEdit() {
 function exit() {
     if (edit) {
         toggleEdit();
+        renderText();
     } else {
         window.close();
     }
@@ -145,6 +146,15 @@ function renderText() {
     box.innerHTML = converter.makeHtml(box.innerText);
 }
 
+// Export the paper
+function exportPaper() {
+    var win = windowManager.createNew(null, "Export", '/app/html/export.html', 'popup', null);
+    win.open();
+    win.onReady(true, (window) => {
+        windowManager.bridge.emit("parent-data-assign", {data:identity.text});
+    })
+}
+
 var got = false;
 // When this window is given an identity
 windowManager.bridge.on("identity-assign", event => {
@@ -154,4 +164,3 @@ windowManager.bridge.on("identity-assign", event => {
         got = true;
     }
 })
-
