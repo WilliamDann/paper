@@ -1,0 +1,78 @@
+<head>
+    <title>Delete Paper?</title>
+    <script src="../card.js" type="text/javascript"></script>
+</head>
+
+<style>
+    body {
+        -ms-overflow-style: scrollbar;
+        -webkit-app-region: drag;
+    }
+
+    @font-face {
+        font-family: "Nova";
+        src: url("NovaFlat.ttf");
+    }
+
+    button {
+        -webkit-app-region: no-drag;
+    }
+    select {
+        -webkit-app-region: no-drag;
+    }
+    .accept {
+        margin-top: 35px;
+        margin-bottom: 0px;
+
+        background-color: rgb(106, 198, 108);
+        border: none;
+        text-decoration: none;
+
+        width: 100%;
+        padding: 5px;
+
+        float: right;
+    }
+    .cancel {
+        margin-top: 35px;
+        margin-bottom: 0px;
+
+        background-color: rgb(218, 100, 100);
+        border: none;
+        text-decoration: none;
+
+        width: 100%;
+        padding: 5px;
+
+        float: left;
+    }
+</style>
+
+<h1 style="font-family:Nova; text-align: center;">Delete Paper?</h1>
+<div style="margin: auto; padding:0px; width: 50%">
+    <div style="margin: auto; padding:0px; width: 50%">
+        <button class="accept" id="export" onclick="doDelete(); window.close();">Delete</button>
+        <button class="cancel" id="export" onclick="window.close();">Cancel</button>
+    </div>
+</div>
+
+<script>
+    var remote = require('electron').remote;
+    var windowManager = remote.require('electron-window-manager');
+    var path = require('path');
+
+    var identity = null;
+
+    // Get an identity from the parent window
+    var got = false;
+    windowManager.bridge.on('parent-data-assign', event => {
+        if (!got) {
+            identity = new Card(event.data.text, event.data.saveID);
+        }
+    });
+
+    // Complete the delete action
+    function doDelete() {
+        identity.delete(path.join(__dirname, '../save/save' + identity.saveID + ".json"));
+    }
+</script>

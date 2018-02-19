@@ -45,9 +45,16 @@ document.addEventListener('keydown', event => {
     // Backspace
     if (event.keyCode == 8 && !edit) {
         if (identity.saveID) {
-            identity.delete(path.join(__dirname, '../save/save' + identity.saveID + ".json"))
-        }
-        exit();
+            var win = windowManager.createNew(null, "Close Window", '/app/html/delete.html', 'popup', null);
+            win.open();
+            win.onReady(true, (window) => {
+                windowManager.bridge.emit("parent-data-assign", {data:identity});
+            });
+
+
+            // identity.delete(path.join(__dirname, '../save/save' + identity.saveID + ".json"))
+            // exit();
+        } else { exit(); }
     }
 
     // n
