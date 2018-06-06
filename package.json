@@ -9,7 +9,7 @@
   "author": "WILLIAM DANN",
   "license": "ISC",
   "dependencies": {
-    "electron": "^1.8.2",
+    "electron": "1.8.3",
     "electron-window-manager": "^1.0.6",
     "showdown": "^1.8.6",
     "showdown-katex": "0.0.5"
